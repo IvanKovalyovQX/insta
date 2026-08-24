@@ -19,7 +19,7 @@ export default defineConfig({
     // baseURL: 'http://localhost:3000',
 
     trace: 'on-first-retry',
-    headless: process.env.HEADLESS === 'true',
+    headless: process.env.HEADLESS !== 'false',
   },
 
   /* Configure projects for major browsers */

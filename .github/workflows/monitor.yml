@@ -1,0 +1,51 @@
+name: Insta Monitor
+
+on:
+  workflow_dispatch:
+    inputs:
+      parallel:
+        description: Parallel insta runs per minute
+        required: false
+        default: "5"
+  schedule:
+    - cron: "0 6 * * *"
+
+jobs:
+  monitor:
+    timeout-minutes: 360
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.32.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run 6-hour monitor
+        run: pnpm monitor
+        env:
+          CI: true
+          MONITOR_PARALLEL: ${{ github.event.inputs.parallel || vars.MONITOR_PARALLEL || '5' }}
+
+      - name: Upload monitor logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: monitor-logs
+          path: monitor-logs/
+          retention-days: 14

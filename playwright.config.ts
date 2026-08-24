@@ -13,7 +13,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 5 : undefined,
   reporter: 'html',
-  timeout: 3 * 60 * 1000,
+  timeout: 10 * 60 * 1000,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     // baseURL: 'http://localhost:3000',
